@@ -1,0 +1,33 @@
+
+services:
+  web:
+    image: odoo:19.0
+    container_name: odoo19_web
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    volumes:
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+      - ./custom_addons:/mnt/extra-addons
+      - ./odoo_data:/var/lib/odoo
+    environment:
+      - HOST=db
+      - USER=odoo
+      - PASSWORD=odoo
+    restart: always
+  
+
+  db:
+    image: postgres:16
+    container_name: odoo19_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    restart: always

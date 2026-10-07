@@ -1,0 +1,1 @@
+from . import my_app_model

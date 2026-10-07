@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Form View ကို Inherit လုပ်၍ Parent Company Field ၏ Widget logic ပြင်ဆင်ခြင်း -->
+    <record id="view_partner_form_single_company" model="ir.ui.view">
+        <field name="name">res.partner.form.single.company</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Parent ID (Many2one) field ပေါ်တွင် Auto Select နှင့် Propagation မဖြစ်အောင် Options ထည့်ခြင်း -->
+            <xpath expr="//field[@name='parent_id']" position="attributes">
+                <attribute name="options">{
+                    'no_create': True,
+                    'no_open': True,
+                    'no_quick_create': True
+                }</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

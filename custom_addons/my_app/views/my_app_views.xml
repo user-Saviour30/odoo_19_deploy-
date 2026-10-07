@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- 1. Search View -->
+    <record id="view_my_app_model_search" model="ir.ui.view">
+        <field name="name">my.app.model.search</field>
+        <field name="model">my.app.model</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"
+                       string="Name or Description"
+                       filter_domain="['|', ('name', 'ilike', self), ('description', 'ilike', self)]"/>
+
+                <filter string="Draft"
+                        name="filter_draft"
+                        domain="[('state', '=', 'draft')]"/>
+
+                <filter string="Confirmed"
+                        name="filter_confirmed"
+                        domain="[('state', '=', 'confirmed')]"/>
+
+                <filter string="Done"
+                        name="filter_done"
+                        domain="[('state', '=', 'done')]"/>
+
+                <separator/>
+
+                <filter string="Archived"
+                        name="filter_inactive"
+                        domain="[('active', '=', False)]"/>
+
+                <group>
+                    <filter string="Status"
+                            name="group_by_state"
+                            context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- 2. List View -->
+    <record id="view_my_app_model_list" model="ir.ui.view">
+        <field name="name">my.app.model.list</field>
+        <field name="model">my.app.model</field>
+        <field name="arch" type="xml">
+            <list string="My App Records">
+                <field name="name"/>
+                <field name="description"/>
+
+                <field name="state"
+                       widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'confirmed'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'cancel'"/>
+
+                <field name="active"
+                       widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- 3. Form View -->
+    <record id="view_my_app_model_form" model="ir.ui.view">
+        <field name="name">my.app.model.form</field>
+        <field name="model">my.app.model</field>
+        <field name="arch" type="xml">
+
+            <form string="My App Record">
+
+                <header>
+
+                    <button name="action_confirm"
+                            type="object"
+                            string="Confirm"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_done"
+                            type="object"
+                            string="Mark as Done"
+                            class="oe_highlight"
+                            invisible="state != 'confirmed'"/>
+
+                    <button name="action_draft"
+                            type="object"
+                            string="Set to Draft"
+                            invisible="state not in ('confirmed', 'cancel')"/>
+
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            invisible="state in ('done', 'cancel')"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,confirmed,done"/>
+
+                </header>
+
+
+                <sheet>
+
+                    <group>
+
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+
+                        <group>
+                            <field name="description"/>
+                        </group>
+
+                    </group>
+
+                </sheet>
+
+
+                <!-- Chatter -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+
+            </form>
+
+        </field>
+    </record>
+
+
+    <!-- 4. Window Action -->
+    <record id="action_my_app_model" model="ir.actions.act_window">
+        <field name="name">My App Records</field>
+        <field name="res_model">my.app.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id"
+               ref="view_my_app_model_search"/>
+    </record>
+
+
+    <!-- 5. Menus -->
+    <menuitem id="menu_my_app_root"
+              name="My New App"
+              sequence="10"/>
+
+    <menuitem id="menu_my_app_model"
+              name="Records"
+              parent="menu_my_app_root"
+              action="action_my_app_model"
+              sequence="10"/>
+
+</odoo>
